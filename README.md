@@ -26,9 +26,7 @@ To install jupyter notebook :
     example:  python3 apriori.py ../data/associationruletestdata.txt 0.5
   ###### command to run asso_rule.py
    the filename link the pickle file which saved apriori result for given support.  
-   ../data/support_50.p means the result got by setting support as 0.5 in apriori. If   
-   you can't find this file, you need to run apriori.py to generate this file first, before  
-   run asso_rule.py.  
+   ../data/support_50.p means the result got by setting support as 0.5 in apriori. If you can't find this file, you need to run apriori.py to generate this file first, before run asso_rule.py.  
    Command Format  
    python3 asso_rule.py filename confidence  
 	Example:  python3 asso_rule.py ../data/support_50.p 0.7  
