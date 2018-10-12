@@ -4,16 +4,16 @@
     This repository includes three projects from course cs601 DataMining&Bioinformatic.
 ## Prerequisites
 There two versions of source code. To run it, you need:  
-To run the .py version
-    To intall python3 : 
-        https://www.python.org/download/releases/3.0/
-    To install Numpy and Matplotlib :
-    	https://www.scipy.org/install.html
+To run the .py version  
+    To intall python3 :  
+        https://www.python.org/download/releases/3.0/  
+    To install Numpy and Matplotlib :  
+    	https://www.scipy.org/install.html  
       
-To run the .ipynb version:
-	To intall python3, Numpy and Matplotlib as mentioned above. 
-	To install jupyter notebook :
-        http://jupyter.org/install
+To run the .ipynb version:  
+	To intall python3, Numpy and Matplotlib as mentioned above.   
+	To install jupyter notebook :  
+        http://jupyter.org/install  
         
 Project 1:
   First part: PCA algorithm
