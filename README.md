@@ -15,10 +15,10 @@ To run the .ipynb version:
 	To install jupyter notebook :  
         http://jupyter.org/install  
         
-Project 1:
-  First part: PCA algorithm
+## Project 1:
+  #### First part: PCA algorithm  
     I implement the PCA algorithm from scratch, then compare its performance with SVD and T-SNE algorithms by using the Matplotlib scatter graph.
-  Second part: Appriori and Association rule algorithm
+  #### Second part: Appriori and Association rule algorithm
     I implement the appriori and association rule algorithm from scratch, then write three templetes to mining rules.
     
   
