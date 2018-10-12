@@ -1,5 +1,5 @@
 # DataMining_Bioinformatic
-Fall 2018, University at Buffalo.
+Fall 2018, University at Buffalo.\n
 This repository includes three projects from course cs601 DataMining&Bioinformatic.
 There two versions of source code. To run it, you need:
 To run the .py version
