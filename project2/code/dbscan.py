@@ -120,21 +120,23 @@ def plot_dbscan(data, clusters_num):
     plt.show()
     plt.close() 
 
-data = mylib.generate_data()
-data = preprocess(data)
-eps = 0.5
-pt = data[0]
-min_pts = 5
-clusters_num = dbscan(data, eps, min_pts)
-plot_dbscan(data, clusters_num)
 
-data = mylib.generate_circle()
-data = preprocess(data)
-eps = 0.15
-pt = data[0]
-min_pts = 5
-clusters_num = dbscan(data, eps, min_pts)
-plot_dbscan(data, clusters_num)
+if __name__ == "__main__":
+    data = mylib.generate_data()
+    data = preprocess(data)
+    eps = 0.5
+    pt = data[0]
+    min_pts = 5
+    clusters_num = dbscan(data, eps, min_pts)
+    plot_dbscan(data, clusters_num)
+
+    data = mylib.generate_circle()
+    data = preprocess(data)
+    eps = 0.15
+    pt = data[0]
+    min_pts = 5
+    clusters_num = dbscan(data, eps, min_pts)
+    plot_dbscan(data, clusters_num)
 
 
 

@@ -125,30 +125,30 @@ def plot_hierarchical(data, clusters):
     plt.show()
     plt.close()
 
+if __name__ == "__main__":
+    #data = mylib.generate_data()
+    data = mylib.generate_circle()
+    clusters_bank = init_clusters_bank(data)
+    distance_matrix = init_distance_matrix(clusters_bank, euclidean_distance)
+    while(len(distance_matrix) != 0):
+        print(len(distance_matrix))
+        min_set = get_min_set(distance_matrix)
+        overlap_dict = get_overlap_dict(distance_matrix, min_set)
+        distance_matrix = update_distance_matrix(distance_matrix, overlap_dict, min_set)
+        clusters_bank = update_clusters_bank(clusters_bank, distance_matrix)
 
-#data = mylib.generate_data()
-data = mylib.generate_circle()
-clusters_bank = init_clusters_bank(data)
-distance_matrix = init_distance_matrix(clusters_bank, euclidean_distance)
-while(len(distance_matrix) != 0):
-    print(len(distance_matrix))
-    min_set = get_min_set(distance_matrix)
-    overlap_dict = get_overlap_dict(distance_matrix, min_set)
-    distance_matrix = update_distance_matrix(distance_matrix, overlap_dict, min_set)
-    clusters_bank = update_clusters_bank(clusters_bank, distance_matrix)
+    plot_hierarchical(data, clusters_bank[-2])
 
-plot_hierarchical(data, clusters_bank[-2])
-
-# data, labels = mylib.get_data("../data/cho.txt")
-# data = mylib.pca(data)
-# clusters_bank = init_clusters_bank(data)
-# distance_matrix = init_distance_matrix(clusters_bank)
-# while(len(distance_matrix) != 0):
-#     #print(len(distance_matrix))
-#     min_set = get_min_set(distance_matrix)
-#     overlap_dict = get_overlap_dict(distance_matrix, min_set)
-#     distance_matrix = update_distance_matrix(distance_matrix, overlap_dict, min_set)
-#     clusters_bank = update_clusters_bank(clusters_bank, distance_matrix)
+    # data, labels = mylib.get_data("../data/cho.txt")
+    # data = mylib.pca(data)
+    # clusters_bank = init_clusters_bank(data)
+    # distance_matrix = init_distance_matrix(clusters_bank)
+    # while(len(distance_matrix) != 0):
+    #     #print(len(distance_matrix))
+    #     min_set = get_min_set(distance_matrix)
+    #     overlap_dict = get_overlap_dict(distance_matrix, min_set)
+    #     distance_matrix = update_distance_matrix(distance_matrix, overlap_dict, min_set)
+    #     clusters_bank = update_clusters_bank(clusters_bank, distance_matrix)
 
 
 
