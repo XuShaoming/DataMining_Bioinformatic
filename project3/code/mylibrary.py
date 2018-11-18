@@ -113,5 +113,10 @@ def convert_label(label, new_neg=-1, new_pos=1, old_neg=0, old_pos=1):
     new_label[label == old_pos] = new_pos
     return new_label
 
+def sign(val):
+    if val > 0:
+        return 1
+    return -1
+
 
 

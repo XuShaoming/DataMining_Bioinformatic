@@ -18,8 +18,8 @@ class ForestFactory:
             index = np.asarray([rand.randint(n) for i in range(n)])
             data = self.training_data[index, :]
             label = self.training_label[index]
-            factory = DT.TreeFactory(data, label)
-            forest.append(factory.get_DT_machine(branch_num, impurity_fun, sub_space_fun, seed))  
+            factory = DT.TreeFactory(data, label, sub_space_fun, seed)
+            forest.append(factory.get_DT_machine(branch_num, impurity_fun))  
         return RF_machine(forest)
 
 class RF_machine:
@@ -46,7 +46,9 @@ def show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed):
         randForest = factory.get_RF(k, branch_num, impurity_fun, sub_space_fun, seed)
         test_data, test_label = mylib.get_data_label(test_set)
         true_label = mylib.convert_label(test_label)
+
         res_label = randForest.predict(test_data)
+
         confusion = mylib.confusion_matrix(true_label, res_label)
         accuracy = mylib.get_accuracy(confusion)
         precision = mylib.get_precision(confusion)
@@ -61,19 +63,20 @@ def show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed):
         print("f1_score: ", f1_score)
 
 if __name__ == "__main__":
-    n = 10
-    k = 30
-    branch_num = 4
-    impurity_fun = mylib.entropy
-    sub_space_fun = DT.sub_p(method=2)
-    seed = 20
+	n = 10
+	k = 30
+	branch_num = 4
+	impurity_fun = mylib.entropy
+	sub_space_fun = DT.sub_p(method=2)
+	seed = 20
 
-    print("***************project3_dataset1*****************")
-    raw_set= mylib.get_set("../data/project3_dataset1.txt")
-    show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed)
-    print("\n\n\n***************project3_dataset2*****************")
-    raw_set= mylib.get_set("../data/project3_dataset2.txt")
-    show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed)
+	print("***************project3_dataset1*****************")
+	raw_set= mylib.get_set("../data/project3_dataset1.txt")
+	show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed)
+	print("\n\n\n***************project3_dataset2*****************")
+	raw_set= mylib.get_set("../data/project3_dataset2.txt")
+	show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed)
+
 
 
 

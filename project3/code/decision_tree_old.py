@@ -19,9 +19,13 @@ class BodyNode:
 
 class TreeFactory:
     
-    def __init__(self, training_data, training_label):
+    def __init__(self, training_data, training_label, sub_space_fun, seed):
         self.training_data = training_data
         self.training_label = training_label
+        self.sub_space_fun = sub_space_fun
+        self.seed = seed
+        self.rand = np.random.RandomState(seed)
+        
     
     def scale_features(self, gate_num):
         gates = []
@@ -96,12 +100,12 @@ class TreeFactory:
             member_dict[member] = np.where(feature == member)[0] 
         return member_dict
         
-    def tree_growth(self, data, label,Es, Fs, gate_num, impurity_fun, sub_space_fun, rand):
+    def tree_growth(self, data, label,Es, Fs, gate_num, impurity_fun):
         Es_list = np.asarray(list(Es))
         Fs_list = np.asarray(list(Fs))
         #chose a subset of features 
-        sub_Fs_num = sub_space_fun(len(Fs_list))
-        Fs_list = Fs_list[rand.permutation(len(Fs_list))[0:sub_Fs_num]]
+        sub_Fs_num = self.sub_space_fun(len(Fs_list))
+        Fs_list = Fs_list[self.rand.permutation(len(Fs_list))[0:sub_Fs_num]]
         
         check_data = data[Es_list, :][:, Fs_list]
         check_label = label[Es_list]
@@ -130,19 +134,19 @@ class TreeFactory:
             del check_label
             for name, Evs_vitual_list in children_dict.items():
                 Evs = set(Es_list[Evs_vitual_list])
-                child = self.tree_growth(data, label, Evs, new_Fs, gate_num, impurity_fun, sub_space_fun, rand)
+                child = self.tree_growth(data, label, Evs, new_Fs, gate_num, impurity_fun)
                 node.add_child(name, child)
         return node
     
-    def get_DT_machine(self, gate_num, impurity_fun, sub_space_fun, seed):
+    def get_DT_machine(self, gate_num, impurity_fun):
         data, gates, nominal_features = self.scale_features(gate_num)
         label = mylib.convert_label(self.training_label)
-        rand = np.random.RandomState(seed)
         Es = set(range(data.shape[0]))
         Fs = set(range(data.shape[1]))
-        root = self.tree_growth(data, label, Es, Fs, gate_num, impurity_fun, sub_space_fun, rand)
+        root = self.tree_growth(data, label, Es, Fs, gate_num, impurity_fun)
         
         return DT_machine(root, gates, nominal_features)
+
 
 class DT_machine:
     def __init__(self, root, gates, nominal_features):
@@ -216,9 +220,8 @@ def show_res(raw_set, n, gate_num, sub_space_fun, seed):
     for i in range(n):
         training_set, test_set = mylib.n_fold(n ,i, raw_set)
         training_data, training_label = mylib.get_data_label(training_set)
-        factory = TreeFactory(training_data, training_label)
-        
-        dtree = factory.get_DT_machine(gate_num, mylib.entropy, sub_space_fun, seed)
+        factory = TreeFactory(training_data, training_label, sub_space_fun, seed)
+        dtree = factory.get_DT_machine(gate_num, mylib.entropy)
         test_data, test_label = mylib.get_data_label(test_set)
         true_label = mylib.convert_label(test_label)
         res_label = dtree.predict(test_data)
@@ -237,13 +240,13 @@ def show_res(raw_set, n, gate_num, sub_space_fun, seed):
 
 
 if __name__ == "__main__":
-    n = 10
-    branch_num = 4
-    sub_space_fun = sub_p(2)
-    seed = 20
-    print("***************project3_dataset1*****************")
-    raw_set= mylib.get_set("../data/project3_dataset1.txt")
-    show_res(raw_set, n, branch_num, sub_space_fun, seed)
-    print("\n\n***************project3_dataset2*****************")
-    raw_set= mylib.get_set("../data/project3_dataset2.txt")
-    show_res(raw_set, n, branch_num, sub_space_fun, seed)
+	n = 10
+	branch_num = 4
+	sub_space_fun = sub_p(2)
+	seed = 20
+	print("***************project3_dataset1*****************")
+	raw_set= mylib.get_set("../data/project3_dataset1.txt")
+	show_res(raw_set, n, branch_num, sub_space_fun, seed)
+	print("\n\n***************project3_dataset2*****************")
+	raw_set= mylib.get_set("../data/project3_dataset2.txt")
+	show_res(raw_set, n, branch_num, sub_space_fun, seed)
