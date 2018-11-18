@@ -19,15 +19,13 @@ class BodyNode:
 
 class TreeFactory:
     
-    def __init__(self, training_data, training_label):
+    def __init__(self, training_data, training_label, sub_space_fun, seed):
         self.training_data = training_data
         self.training_label = training_label
+        self.sub_space_fun = sub_space_fun
+        self.seed = seed
+        self.rand = np.random.RandomState(seed)
         
-    def convert_label(self, label, new_neg=-1, new_pos=1, old_neg=0, old_pos=1):
-        new_label = np.zeros(label.shape)
-        new_label[label == old_neg] = new_neg
-        new_label[label == old_pos] = new_pos
-        return new_label
     
     def scale_features(self, gate_num):
         gates = []
@@ -102,9 +100,13 @@ class TreeFactory:
             member_dict[member] = np.where(feature == member)[0] 
         return member_dict
         
-    def tree_growth(self, data, label,Es, Fs, impurity_fun):
+    def tree_growth(self, data, label,Es, Fs, gate_num, impurity_fun):
         Es_list = np.asarray(list(Es))
         Fs_list = np.asarray(list(Fs))
+        #chose a subset of features 
+        sub_Fs_num = self.sub_space_fun(len(Fs_list))
+        Fs_list = Fs_list[self.rand.permutation(len(Fs_list))[0:sub_Fs_num]]
+        
         check_data = data[Es_list, :][:, Fs_list]
         check_label = label[Es_list]
         node = self.create_node(check_data, check_label)
@@ -117,8 +119,11 @@ class TreeFactory:
             new_Fs = Fs - set([feature_actual_id])
             children_dict = self.get_children(check_data, feature_virtual_id)
             
-            #handle unconvered memebers
+            #majority vote for unseen samples
             feature_members = set(data[:, feature_actual_id])
+            # not nominal feature and the the feature members not completed
+            if min(list(feature_members)) != 0 and len(feature_members) != gate_num:
+                feature_members = set(range(1, gate_num + 1))
             c_feature_members = set(children_dict.keys())
             uncovered_members = feature_members - c_feature_members
             guess_label = max(check_label, key=Counter(check_label).get)
@@ -129,18 +134,19 @@ class TreeFactory:
             del check_label
             for name, Evs_vitual_list in children_dict.items():
                 Evs = set(Es_list[Evs_vitual_list])
-                child = self.tree_growth(data, label, Evs, new_Fs, impurity_fun)
+                child = self.tree_growth(data, label, Evs, new_Fs, gate_num, impurity_fun)
                 node.add_child(name, child)
         return node
     
     def get_DT_machine(self, gate_num, impurity_fun):
         data, gates, nominal_features = self.scale_features(gate_num)
-        label = self.convert_label(self.training_label)
+        label = mylib.convert_label(self.training_label)
         Es = set(range(data.shape[0]))
         Fs = set(range(data.shape[1]))
-        root = self.tree_growth(data, label, Es, Fs, impurity_fun)
+        root = self.tree_growth(data, label, Es, Fs, gate_num, impurity_fun)
         
         return DT_machine(root, gates, nominal_features)
+
 
 class DT_machine:
     def __init__(self, root, gates, nominal_features):
@@ -176,6 +182,7 @@ class DT_machine:
         return np.asarray(data_t).T
     
     def predict_aux(self, node, entry):
+
         if type(node) is LeafNode:
             return node.label
         return self.predict_aux(node.children[entry[node.feature_id]], entry)
@@ -187,16 +194,36 @@ class DT_machine:
             res_label.append(self.predict_aux(self.root, row))
         return np.asarray(res_label)
 
+def sub_p(method=1):
+    """
+    recommend:
+        method_1 for single Tree
+        method_2 for Classification problem
+        method_3 for regression problem
+    """
+    def method_1(p):
+        return p
+    def method_2(p):
+        return int(np.log2(p))
+    def method_3(p):
+        return int(p/3)
+    
+    if method == 2:
+        return method_2
+    elif method == 3:
+        return method_3
+    else:
+        return method_1
 
-def show_res(raw_set, n, gate_num):
+def show_res(raw_set, n, gate_num, sub_space_fun, seed):
     
     for i in range(n):
         training_set, test_set = mylib.n_fold(n ,i, raw_set)
         training_data, training_label = mylib.get_data_label(training_set)
-        factory = TreeFactory(training_data, training_label)
+        factory = TreeFactory(training_data, training_label, sub_space_fun, seed)
         dtree = factory.get_DT_machine(gate_num, mylib.entropy)
         test_data, test_label = mylib.get_data_label(test_set)
-        true_label = factory.convert_label(test_label)
+        true_label = mylib.convert_label(test_label)
         res_label = dtree.predict(test_data)
         confusion = mylib.confusion_matrix(true_label, res_label)
         accuracy = mylib.get_accuracy(confusion)
@@ -215,10 +242,11 @@ def show_res(raw_set, n, gate_num):
 if __name__ == "__main__":
 	n = 10
 	branch_num = 4
+	sub_space_fun = sub_p(2)
+	seed = 20
 	print("***************project3_dataset1*****************")
 	raw_set= mylib.get_set("../data/project3_dataset1.txt")
-	show_res(raw_set, n, branch_num)
+	show_res(raw_set, n, branch_num, sub_space_fun, seed)
 	print("\n\n***************project3_dataset2*****************")
 	raw_set= mylib.get_set("../data/project3_dataset2.txt")
-	show_res(raw_set, n, branch_num)
-
+	show_res(raw_set, n, branch_num, sub_space_fun, seed)

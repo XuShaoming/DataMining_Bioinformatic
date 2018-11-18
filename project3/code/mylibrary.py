@@ -107,5 +107,11 @@ def gain(parent, children, impurity_fun):
     children_impurity = np.asarray([impurity_fun(child) for child in children])
     return impurity_fun(parent) - np.sum(children_weight * children_impurity)
 
+def convert_label(label, new_neg=-1, new_pos=1, old_neg=0, old_pos=1):
+    new_label = np.zeros(label.shape)
+    new_label[label == old_neg] = new_neg
+    new_label[label == old_pos] = new_pos
+    return new_label
+
 
 
