@@ -3,12 +3,33 @@ import mylibrary as mylib
 import decision_tree as DT
 
 class AdaFactory:
-    
+    """
+    Purpose:
+        The factory to generate Random forest machine.
+    Initialized by :
+        training data and label
+    """
     def __init__(self, training_data, training_label):
         self.training_data = training_data
         self.training_label = training_label
     
     def get_AdaMachine(self, k, branch_num=4, impurity_fun=mylib.entropy, sub_space_fun=DT.sub_p(method=2), seed=20):
+        """
+        Based on pseudocode : Algorithm 4.6 AdaBoost algorithm
+            <Introduction to Data Mining 2nd Edition> Pang-ning Tang
+        Purpose:
+            get random RF_machine object.
+        Input:
+            k: int, the number of trees in forest.
+            branch_num: int, the numbers of branch for continuous features in decision tree.
+            impurity_fun: function, the function to measure impurity, 
+                          including error, entropy, gini. 
+            sub_space_fun: function, the function to determine the percentage of features used 
+                           for build tree. 
+            seed: int, use to get random object.
+        Output:
+            a AdaMachine object.
+        """
         rand = np.random.RandomState(seed)
         n,d = self.training_data.shape
         true_label = mylib.convert_label(self.training_label)
@@ -46,11 +67,22 @@ class AdaFactory:
         return AdaMachine(classifiers, np.asarray(importances))
 
 class AdaMachine:
+    """
+    Purpose:
+        Generate object to do Ada boosting classification.
+    Initialized by :
+        classifiers: a list of classifiers.
+        importances: real, a list of weights for corresponding classifiers. its sum is 1.
+    """
     def __init__(self, classifiers, importances):
         self.classifiers = classifiers.copy()
         self.importances = importances.copy()
     
     def predict(self, test_data):
+        """
+        Purpose:
+            Use the sign function on weighted result to classify the test data.
+        """
         labels = []
         for classifier in self.classifiers:
             labels.append(classifier.predict(test_data))
@@ -59,6 +91,7 @@ class AdaMachine:
         for row in labels.T:
             res.append(mylib.sign(np.sum(row * self.importances)))
         return np.asarray(res)
+
 
 def show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed):
     
@@ -97,3 +130,6 @@ if __name__ == "__main__":
     print("\n\n\n***************project3_dataset2*****************")
     raw_set= mylib.get_set("../data/project3_dataset2.txt")
     show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed)
+
+
+

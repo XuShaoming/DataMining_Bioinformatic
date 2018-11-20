@@ -4,12 +4,32 @@ import decision_tree as DT
 from collections import Counter
 
 class ForestFactory:
-    
+    """
+    Purpose:
+        The factory to generate Random forest machine.
+    Initialized by :
+        training data and label
+    """
     def __init__(self, training_data, training_label):
         self.training_data = training_data
         self.training_label = training_label
     
     def get_RF(self, k, branch_num=4, impurity_fun=mylib.entropy, sub_space_fun=DT.sub_p(method=2), seed=20):
+        """
+        Purpose:
+            get random RF_machine object.
+        Input:
+            k: int, the number of trees in forest.
+            branch_num: int, the numbers of branch for continuous features in decision tree.
+            impurity_fun: function, the function to measure impurity, 
+                          including error, entropy, gini. 
+            sub_space_fun: function, the function to determine the percentage of features used 
+                           for build tree. 
+            seed: int, use to get random object.
+        
+        Output:
+            a RF_machine object.
+        """
         rand = np.random.RandomState(seed)
         n,d = self.training_data.shape
         
@@ -22,12 +42,23 @@ class ForestFactory:
             forest.append(factory.get_DT_machine(branch_num, impurity_fun, sub_space_fun, seed))  
         return RF_machine(forest)
 
+
 class RF_machine:
-    
+    """
+    Purpose:
+        Generate object to do random forest classification..
+    Initialized by :
+        forest: a list of decision trees.
+    """
     def __init__(self, forest):
         self.forest = forest.copy()
     
     def predict(self, test_data):
+        """
+        Purpose:
+            To classify the test_data.
+            Here, I use the majority vote trees as the label.
+        """
         labels = []
         for tree in self.forest:
             labels.append(tree.predict(test_data))
@@ -36,6 +67,7 @@ class RF_machine:
         for row in labels.T:
             res.append(max(row, key=Counter(row).get))
         return np.asarray(res)
+
 
 def show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed):
     
@@ -59,6 +91,7 @@ def show_res(raw_set, n, k, branch_num, impurity_fun, sub_space_fun, seed):
         print("precision: ", precision)
         print("recall: ", recall)
         print("f1_score: ", f1_score)
+
 
 if __name__ == "__main__":
     n = 10

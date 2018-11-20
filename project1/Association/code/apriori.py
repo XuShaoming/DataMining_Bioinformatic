@@ -7,7 +7,6 @@ from io import StringIO
 from collections import deque
 import time
 
-## Since the IndentationError I delete all the log in function. But all of that saved in .ipynb file.
 
 def get_data(filename):
     """

@@ -4,12 +4,30 @@ from mylibrary import NominalFeature
 from collections import Counter
 
 class NaiveBayesFactory:
+    """
+    Purpose:
+        The factory to generate NaiveBayes machine.
+    Initialized by :
+        training data and label
     
+    """
     def __init__(self, training_data, training_label):
         self.training_data = training_data
         self.training_label = training_label
     
     def scale_features(self, section_num):
+        """
+        Purpose:
+            to discretize the training data.
+            For continuous data, it will be divided to section_num sections.
+            For nominal data, it will be labeled by the index of a member list.
+        Input:
+            section_num: int, numbers of discrete sections for continuours data.
+        Ouput:
+            The normized data
+            gates: a list of gates for all features.
+            NominalFeatures: a list of NominalFeature which save nominal features's colum id and members
+        """
         gates = []
         NominalFeatures = []
         data_t = []
@@ -46,6 +64,14 @@ class NaiveBayesFactory:
         return np.asarray(data_t).T, gates, NominalFeatures
     
     def get_naiveBayes_machine(self, sect_num):
+        """
+        Purpose:
+            To generate NaiveBayes_Machine object.
+        Input:
+            sect_num: int, numbers of discrete sections for continuours data.
+        Output:
+            NaiveBayes_Machine object.
+        """
         data, gates, nominal_features = self.scale_features(sect_num)
         nominal_ids = [obj.col_id for obj in nominal_features]
         
@@ -84,8 +110,19 @@ class NaiveBayesFactory:
             
         return NaiveBayes_Machine(p0, p1, features, gates, nominal_features)
 
-
 class NaiveBayes_Machine:
+    """
+    Purpose:
+        To generate objects to do NaiveBayes classification task.
+    Initialized by:
+        p0: real, probability of negative samples in training data.
+        p1: real, probability of postive samples in training data.
+        features_stat: a list of dictionary. features_stat[0] saves the numbers of the positve 
+                       and the negaive labels for each members in column 0 feature.
+        gates: save the gates using to discretize continuous features.
+        nominal_features: a list of NominalFeature which save nominal features's colum id and members
+    
+    """
     def __init__(self, p0, p1, features_stat, gates, nominal_features):
         self.p0 = p0
         self.p1 = p1
@@ -94,6 +131,10 @@ class NaiveBayes_Machine:
         self.nominal_features = nominal_features.copy()
         
     def preprocess(self, the_data):
+        """
+        Purpose:
+            Use the gates and nominal_features to discretize test data.
+        """
         data_t = []
         nominal_ids = [obj.col_id for obj in self.nominal_features]
         nominal_loc = 0
@@ -123,6 +164,10 @@ class NaiveBayes_Machine:
         return np.asarray(data_t).T   
     
     def predict(self, test_data):
+        """
+        Purpose:
+            to classify the test_data using bayes rule.
+        """
         data_test = self.preprocess(test_data)
         res_label = []
         for row in data_test:
@@ -135,7 +180,6 @@ class NaiveBayes_Machine:
             res_label.append(np.argmax(check))
             
         return np.asarray(res_label)
-
 
 def show_res(raw_set, n, sec_num):
     
@@ -161,11 +205,11 @@ def show_res(raw_set, n, sec_num):
 
 
 if __name__ == "__main__":
-	n = 10
-	sec_num = 5
-	print("***************project3_dataset1*****************")
-	raw_set= mylib.get_set("../data/project3_dataset1.txt")
-	show_res(raw_set, n, sec_num)
-	print("\n\n***************project3_dataset2*****************")
-	raw_set= mylib.get_set("../data/project3_dataset2.txt")
-	show_res(raw_set, n, sec_num)
+    n = 10
+    sec_num = 5
+    print("***************project3_dataset1*****************")
+    raw_set= mylib.get_set("../data/project3_dataset1.txt")
+    show_res(raw_set, n, sec_num)
+    print("\n\n***************project3_dataset2*****************")
+    raw_set= mylib.get_set("../data/project3_dataset2.txt")
+    show_res(raw_set, n, sec_num)
