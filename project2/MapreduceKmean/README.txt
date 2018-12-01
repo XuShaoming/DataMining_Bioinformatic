@@ -16,7 +16,7 @@ To run the code you can use these shell.
 3. loadData.sh. It will load data/KmeanData.txt and data/KmeanCenter.txt to hdfs in proper place.
 4. runkmean.sh. It will remove the previous output, then start new Kmean job. At last it will show you all result.
 
-In data/data folder, we provide two python script.
+In data/data folder, I provide two python script.
 1. pca_file.py do PCA on given data
    format:  python3 pca_file.py DATA_FILE.txt
    get: DATA_FILE_PCA.txt
