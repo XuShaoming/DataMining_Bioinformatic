@@ -14,7 +14,7 @@ To run the code you can use these shell.
 1. compile.sh. It will compile the all java files and compact class file in the jar.
 2. inithdfs.sh. It will init mynode folders in 3.1 and 3.2. Then build and start the namenode.
 3. loadData.sh. It will load data/KmeanData.txt and data/KmeanCenter.txt to hdfs in proper place.
-4. runkmean.sh. It will remove the previous output, then start new Kmean job. Last it will show you all result.
+4. runkmean.sh. It will remove the previous output, then start new Kmean job. At last it will show you all result.
 
 In data/data folder, we provide two python script.
 1. pca_file.py do PCA on given data
