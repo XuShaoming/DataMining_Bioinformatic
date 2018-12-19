@@ -30,5 +30,10 @@ To install jupyter notebook :
    Command Format  
    python3 asso_rule.py filename confidence  
 	Example:  python3 asso_rule.py ../data/support_50.p 0.7  
-    
+	
+## Project 2:
+  Implemented Hierarchical Agglomerative, DBSCAN, Expectation Maximization clustering algorithms, and MapReduce K-mean algorithm on Hadoop.
+  
+## Project 3:
+  Implemented K Nearest Neighbor, Naïve Bayes, Decision Tree, Random Forest, and AdaBoost classification algorithms. And used N-fold Cross Validation and F1 score to measure their performance
   
